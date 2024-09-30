@@ -8,7 +8,12 @@ pub struct Patterns {
     pub power_75: LedPattern,
     pub power_50: LedPattern,
     pub power_25: LedPattern,
-    pub glider: LedPattern,
+    pub dado1: LedPattern,
+    pub dado2: LedPattern,
+    pub dado3: LedPattern,
+    pub dado4: LedPattern,
+    pub dado5: LedPattern,
+    pub dado6: LedPattern,
     pub all_on: LedPattern,
     pub vertical_stripe_1: LedPattern,
     pub vertical_stripe_2: LedPattern,
@@ -24,7 +29,12 @@ pub static PATTERNS: LazyLock<Patterns> = LazyLock::new(|| Patterns {
     power_50: 0b000000111,
     power_25: 0b000000001,
 
-    glider: 0b010001111,
+    dado1: 0b000010000,
+    dado2: 0b001000100,
+    dado3: 0b001010100,
+    dado4: 0b101000101,
+    dado5: 0b101010101,
+    dado6: 0b101101101,
     all_on: 0b111111111,
     vertical_stripe_1: 0b100100100,
     vertical_stripe_2: 0b010010010,
@@ -62,122 +72,38 @@ pub fn scenes() -> Scenes {
     Vec::from_slice(&[
         // normal glider
         Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.glider),
-            color: ColorPalette::Solid((0, 0, 255).into()),
-            ..Default::default()
-        }])
-        .unwrap(),
-        Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.glider),
-            color: ColorPalette::Solid((0, 255, 0).into()),
-            ..Default::default()
-        }])
-        .unwrap(),
-        Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.glider),
+            effect: Pattern::Simple(patterns.dado1),
             color: ColorPalette::Solid((255, 0, 0).into()),
             ..Default::default()
         }])
         .unwrap(),
-        // breathing glider
         Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.glider),
-            color: ColorPalette::Solid((0, 0, 255).into()),
-            pattern_shaders: Vec::from_slice(&[FragmentShader::Breathing(0.7)]).unwrap(),
-            ..Default::default()
-        }])
-        .unwrap(),
-        // italy flag
-        Vec::from_slice(&[
-            RenderCommand {
-                effect: Pattern::Simple(patterns.vertical_stripe_1),
-                color: ColorPalette::Solid((0, 255, 0).into()),
-                ..Default::default()
-            },
-            RenderCommand {
-                effect: Pattern::Simple(patterns.vertical_stripe_2),
-                color: ColorPalette::Solid((255, 255, 255).into()),
-                ..Default::default()
-            },
-            RenderCommand {
-                effect: Pattern::Simple(patterns.vertical_stripe_3),
-                color: ColorPalette::Solid((255, 0, 0).into()),
-                ..Default::default()
-            },
-        ])
-        .unwrap(),
-        // single rainbow glider
-        Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.glider),
-            pattern_shaders: Vec::from_slice(&[FragmentShader::Rainbow2D(0.5)]).unwrap(),
-            ..Default::default()
-        }])
-        .unwrap(),
-        // rainbow 2d
-        Vec::from_slice(&[RenderCommand {
-            screen_shaders: Vec::from_slice(&[FragmentShader::Rainbow2D(0.5)]).unwrap(),
-            ..Default::default()
-        }])
-        .unwrap(),
-        // solid red
-        Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.all_on),
+            effect: Pattern::Simple(patterns.dado2),
             color: ColorPalette::Solid((255, 0, 0).into()),
             ..Default::default()
         }])
         .unwrap(),
-        // solid green
         Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.all_on),
-            color: ColorPalette::Solid((0, 255, 0).into()),
+            effect: Pattern::Simple(patterns.dado3),
+            color: ColorPalette::Solid((255, 0, 0).into()),
             ..Default::default()
         }])
         .unwrap(),
-        // solid blue
         Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.all_on),
-            color: ColorPalette::Solid((0, 0, 255).into()),
+            effect: Pattern::Simple(patterns.dado4),
+            color: ColorPalette::Solid((255, 0, 0).into()),
             ..Default::default()
         }])
         .unwrap(),
-        // solid white
         Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.all_on),
-            color: ColorPalette::Solid((255, 255, 255).into()),
+            effect: Pattern::Simple(patterns.dado5),
+            color: ColorPalette::Solid((255, 0, 0).into()),
             ..Default::default()
         }])
         .unwrap(),
-        // police lights
         Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(patterns.all_on),
-            color: ColorPalette::Custom(
-                Vec::from_slice(&[
-                    (0, 0, 0).into(),
-                    (255, 0, 0).into(),
-                    (0, 0, 0).into(),
-                    (255, 0, 0).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 255).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 255).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 0).into(),
-                    (0, 0, 0).into(),
-                ])
-                .unwrap(),
-                15.0,
-            ),
-            ..Default::default()
-        }])
-        .unwrap(),
-        // off
-        Vec::from_slice(&[RenderCommand {
-            effect: Pattern::Simple(0),
-            color: ColorPalette::Solid((0, 0, 0).into()),
+            effect: Pattern::Simple(patterns.dado6),
+            color: ColorPalette::Solid((255, 0, 0).into()),
             ..Default::default()
         }])
         .unwrap(),

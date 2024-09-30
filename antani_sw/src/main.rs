@@ -229,13 +229,13 @@ impl LedMatrix {
 enum TaskCommand {
     ThermalThrottleMultiplier(f32), // 1.0 = no throttle, 0.0 = full throttle
     ReceivedIrNec(u8, u8, bool),    // add, cmd, repeat
-    ShortButtonPress,
+    ShortButtonPress(i64),
     LongButtonPress,
     MidiSetPixel(u8, u8, u8, u8), // x y channel (0=r 1=g 2=b) value
     SetWorkingMode(WorkingMode),
     SendIrNec(u8, u8, bool),
     IrTxDone,
-    NextPattern,
+    NextPattern(usize),
     IncreaseBrightness,
     DecreaseBrightness,
     SetBrightness(OutputPower),
@@ -396,7 +396,7 @@ async fn main_tsk(mut ws2812: Ws2812<'static, PIO0, 0, 9>, scenes: &'static Scen
     let mut working_mode = WorkingMode::SpecialTimeout(boot_animation.clone(), 0.5);
 
     let mut scene_id = 0;
-    let mut out_power = OutputPower::High;
+    let mut out_power = OutputPower::NighMode;
 
     let mut is_transmitting = false;
 
@@ -473,7 +473,7 @@ async fn main_tsk(mut ws2812: Ws2812<'static, PIO0, 0, 9>, scenes: &'static Scen
 
                         (0, 68, false) => {
                             // animations
-                            mega_publisher.publish(TaskCommand::NextPattern).await;
+                            // mega_publisher.publish(TaskCommand::NextPattern).await;
                         }
                         // END of ir command from the chinese remote
 
@@ -641,8 +641,13 @@ async fn main_tsk(mut ws2812: Ws2812<'static, PIO0, 0, 9>, scenes: &'static Scen
                     }
                     WHITE_LED_SIGNAL.signal(WhiteLedCommand::Communication);
                 }
-                TaskCommand::ShortButtonPress => {
-                    mega_publisher.publish(TaskCommand::NextPattern).await;
+                TaskCommand::ShortButtonPress(dur) => {
+                    for i in 0..6 {
+                        mega_publisher.publish(TaskCommand::NextPattern(i)).await;
+                    }
+                    let lastf: f32 = ((dur % 10) as f32) * 0.6;
+                    let last: usize = (((lastf / 1.0) as isize) * 1) as usize;
+                    mega_publisher.publish(TaskCommand::NextPattern(last)).await;
                 }
                 TaskCommand::LongButtonPress => {
                     mega_publisher
@@ -674,9 +679,11 @@ async fn main_tsk(mut ws2812: Ws2812<'static, PIO0, 0, 9>, scenes: &'static Scen
                     is_transmitting = false;
                 }
 
-                TaskCommand::NextPattern => {
+                TaskCommand::NextPattern(dado) => {
                     if let WorkingMode::Normal = working_mode {
-                        scene_id = (scene_id + 1) % scenes.len();
+                        //scene_id = (scene_id + 1) % scenes.len();
+                        Timer::after_millis(150).await;
+                        scene_id = dado;
                     } else {
                         working_mode = WorkingMode::Normal;
                     }
@@ -969,7 +976,10 @@ async fn button_tsk(mut button: Input<'static>, publisher: MegaPublisher) {
         if press_duration >= Duration::from_millis(50)
             && press_duration < Duration::from_millis(1000)
         {
-            publisher.publish(TaskCommand::ShortButtonPress).await;
+            let dur = Duration::as_millis(&press_duration);
+            publisher
+                .publish(TaskCommand::ShortButtonPress(dur as i64))
+                .await;
         }
     }
 }
